@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A4E76CF7-3FFD-4B03-AF17-72F045D3CAD8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BitMexLibrary</RootNamespace>
+    <AssemblyName>BitMexLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TA-Lib-Core, Version=1.0.4998.21369, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TA-Lib.0.5.0.3\lib\TA-Lib-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BitMEXApi.cs" />
+    <Compile Include="BitMEXOrder.cs" />
+    <Compile Include="CandlesTA.cs" />
+    <Compile Include="CandlesJSON.cs" />
+    <Compile Include="CandleExtensions.cs" />
+    <Compile Include="CommonFunction.cs" />
+    <Compile Include="Enums\Approximation.cs" />
+    <Compile Include="Enums\CandleVariable.cs" />
+    <Compile Include="Enums\EnumExtensions.cs" />
+    <Compile Include="Enums\SideEnum.cs" />
+    <Compile Include="Enums\Period.cs" />
+    <Compile Include="Enums\SignalEnum.cs" />
+    <Compile Include="Enums\SplitSegmentsOptions.cs" />
+    <Compile Include="Error.cs" />
+    <Compile Include="Indicators\Adx.cs" />
+    <Compile Include="Indicators\Atr.cs" />
+    <Compile Include="Indicators\AwesomeOscillator.cs" />
+    <Compile Include="Indicators\BaseIndicator.cs" />
+    <Compile Include="Indicators\Bbands.cs" />
+    <Compile Include="Indicators\BearBull.cs" />
+    <Compile Include="Indicators\CandlePatterns.cs" />
+    <Compile Include="Indicators\Cci.cs" />
+    <Compile Include="Indicators\Cmo.cs" />
+    <Compile Include="Indicators\DerivativeOscillator.cs" />
+    <Compile Include="Indicators\Ema.cs" />
+    <Compile Include="Indicators\Fisher.cs" />
+    <Compile Include="Indicators\HeikinAshi.cs" />
+    <Compile Include="Indicators\Ichimoku.cs" />
+    <Compile Include="Indicators\Macd.cs" />
+    <Compile Include="Indicators\Mama.cs" />
+    <Compile Include="Indicators\Mfi.cs" />
+    <Compile Include="Indicators\MinusDI.cs" />
+    <Compile Include="Indicators\Mom.cs" />
+    <Compile Include="Indicators\PivotHigh.cs" />
+    <Compile Include="Indicators\PivotLow.cs" />
+    <Compile Include="Indicators\PlusDI.cs" />
+    <Compile Include="Indicators\Rsi.cs" />
+    <Compile Include="Indicators\Sar.cs" />
+    <Compile Include="Indicators\Sma.cs" />
+    <Compile Include="Indicators\Stoch.cs" />
+    <Compile Include="Indicators\StochFast.cs" />
+    <Compile Include="Indicators\StochRsi.cs" />
+    <Compile Include="Indicators\TDSequential.cs" />
+    <Compile Include="Indicators\Tema.cs" />
+    <Compile Include="Indicators\Wma.cs" />
+    <Compile Include="WebSocketJSON\Info.cs" />
+    <Compile Include="Margin.cs" />
+    <Compile Include="WebSocketJSON\OpClass.cs" />
+    <Compile Include="WebSocketJSON\TableOrder.cs" />
+    <Compile Include="WebSocketJSON\Status.cs" />
+    <Compile Include="WebSocketJSON\SuccessClass.cs" />
+    <Compile Include="WebSocketJSON\TableJSON.cs" />
+    <Compile Include="WebSocketJSON\TableOrderBook.cs" />
+    <Compile Include="ExchangeCandles.cs" />
+    <Compile Include="PineBool.cs" />
+    <Compile Include="Pine.cs" />
+    <Compile Include="PineExtensions.cs" />
+    <Compile Include="PineNA.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebSocketJSON\SendOp.cs" />
+    <Compile Include="TradingAlgos.cs" />
+    <Compile Include="WebSocketJSON\DataMargin.cs" />
+    <Compile Include="WebSocketJSON\DataWallet.cs" />
+    <Compile Include="WebSocketJSON\Position.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommLibrary\CommLibrary.csproj">
+      <Project>{380aea63-56a2-4492-be99-245bbf35b1a5}</Project>
+      <Name>CommLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,376 @@
+﻿<Window x:Class="BTMRTB.TradeWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BTMRTB"
+        xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
+        xmlns:vlib="clr-namespace:ViewLibrary;assembly=ViewLibrary"
+        xmlns:wsock="clr-namespace:BitMexLibrary.WebSocketJSON;assembly=BitMexLibrary"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d" 
+        Visibility="{Binding AuthorizationComplete, Converter={StaticResource BooleanToVisibilityConverter}}"
+        SizeToContent="Height"
+        Title="TradeWin" MinHeight="450" Width="800">
+    <d:Window.DataContext>
+        <vm:ViewModelTradeDD AuthorizationComplete="True"
+                             FinishCalculationTime="01/01/2019 3:00">
+            <vm:ViewModelTradeDD.Positions>
+                <!--<vlib:PositionsObs>-->
+                <wsock:Position IsActive="False"/>
+                <wsock:Position  IsActive="True" />
+                <wsock:Position  CurrentQty="1" />
+                <wsock:Position  CurrentQty="0" />
+                <!--</vlib:PositionsObs>-->
+            </vm:ViewModelTradeDD.Positions>
+            <vm:ViewModelTradeDD.Orders>
+                <wsock:TableOrder Side="Buy"/>
+                <wsock:TableOrder Side="Sell"/>
+                <wsock:TableOrder Side="8"/>
+            </vm:ViewModelTradeDD.Orders>
+        </vm:ViewModelTradeDD>
+    </d:Window.DataContext>
+
+    <Window.Resources>
+        <CollectionViewSource x:Key="PositionsNotZero" 
+                              Source="{Binding Positions}" 
+                              Filter="CollectionViewSource_Filter"
+                              IsLiveFilteringRequested="True">
+            <CollectionViewSource.LiveFilteringProperties>
+                <sys:String>IsActive</sys:String>
+            </CollectionViewSource.LiveFilteringProperties>
+        </CollectionViewSource>
+        <SolidColorBrush x:Key="ToggleButton.Color.Check" Color="LightSkyBlue" />
+        <SolidColorBrush x:Key="ToggleButton.Color.UnCheck" Color="White"/>
+        <sys:String  x:Key="ToggleButton.Text.Check">Buy</sys:String>
+        <sys:String  x:Key="ToggleButton.Text.UnCheck">Sell</sys:String>
+        <Style TargetType="ToggleButton" x:Key="ToggleButton.Style">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate  TargetType="{x:Type ToggleButton}">
+                        <Border x:Name="PART_brd" BorderThickness="1"
+                                BorderBrush="{DynamicResource ToggleButton.Color.Check}"  
+                                Background="{DynamicResource ToggleButton.Color.UnCheck}">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="PART_tbBuy" Text="{DynamicResource ToggleButton.Text.Check}" Padding="5" TextAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Background" Value="{Binding Background, ElementName=PART_brd}"/>
+                                            <Setter Property="Foreground" Value="{Binding BorderBrush, ElementName=PART_brd}"/>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock x:Name="PART_tbSell" Text="{DynamicResource ToggleButton.Text.UnCheck}" Grid.Column="1" Padding="5" TextAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Background" Value="{Binding Foreground, ElementName=PART_tbBuy}"/>
+                                            <Setter Property="Foreground" Value="{Binding Background, ElementName=PART_tbBuy}"/>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked"  Value="true">
+                                <Setter TargetName="PART_tbBuy" Property="Foreground" Value="{Binding  Background,ElementName=PART_brd}"/>
+                                <Setter TargetName="PART_tbBuy" Property="Background" Value="{Binding  BorderBrush,ElementName=PART_brd}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Border" x:Key="Border.Style" BasedOn="{StaticResource ComStyle}">
+            <Setter Property="BorderBrush" Value="DarkGray"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="LightGreen" Offset="1"/>
+                        <GradientStop Color="LightCyan"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Border" BasedOn="{StaticResource Border.Style}"/>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource ComStyle}">
+            <Setter Property="Margin" Value="5,2"/>
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource ComStyle}"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Border>
+            <StackPanel>
+                <TextBlock DataContext="{Binding Settings}">
+                    <Run Text="Тип сети: "/>
+                    <Run>
+                        <Run.Style>
+                            <Style TargetType="Run">
+                                <Setter Property="Text" Value="Test"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RealWork}" Value="true">
+                                        <Setter Property="Text" Value="Real"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Run.Style>
+                    </Run>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="TimeLastMessage: "/>
+                    <Run Text="{Binding TimeLastMessage}"/>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="CountMessage: "/>
+                    <Run Text="{Binding CountMessage}"/>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="MaxBuy: "/>
+                    <Run Text="{Binding MaxBuy}"/>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="MinSell: "/>
+                    <Run Text="{Binding MinSell}"/>
+                </TextBlock>
+                <TextBlock DataContext="{Binding Wallet}">
+                    <Run Text="Wallet.Amount: "/>
+                    <Run Text="{Binding Amount}"/>
+                </TextBlock>
+                <TextBlock DataContext="{Binding Margin, Mode=OneWay}">
+                    <Run Text="Margin.MarginBalance: "/>
+                    <Run Text="{Binding MarginBalance}"/>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="IsOpen: "/>
+                    <Run Text="{Binding IsOpen}" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="Size Candle: "/>
+                    <Run Text="{Binding BinSizeSelected}" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="Candles count: "/>
+                    <Run Text="{Binding CountCandelesForCalculate}" />
+                </TextBlock>
+            </StackPanel>
+        </Border>
+        <Border Grid.Column="1">
+            <StackPanel>
+                <DataGrid MinHeight="50" Margin="5" HeadersVisibility="Column"
+                  IsReadOnly="True" AutoGenerateColumns="False"
+                  ItemsSource="{Binding Mode=OneWay, Source={StaticResource PositionsNotZero}}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding IsActive}" Header="IsActive"/>
+                        <DataGridTextColumn Binding="{Binding OpenOrderSellQty}" Header="OpenOrderSellQty"/>
+                        <DataGridTextColumn Binding="{Binding OpenOrderBuyQty}" Header="OpenOrderBuyQty"/>
+                        <DataGridTextColumn Binding="{Binding Symbol}" Header="Символ"/>
+                        <DataGridTextColumn Binding="{Binding CurrentQty}" Header="Размер"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <DataGrid ItemsSource="{Binding Orders}" Margin="5" IsReadOnly="True" HeadersVisibility="Column" MinHeight="50"/>
+            </StackPanel>
+        </Border>
+        <Border Grid.Row="1">
+            <StackPanel Margin="5">
+                <StackPanel IsEnabled="{Binding IsWorkStarted, Converter={StaticResource BooleanNotConverter}}">
+                    <ToggleButton x:Name="toggleButton1"  Margin="5,2" 
+                                  IsChecked="{Binding IsSideBuy}" 
+                                  Style="{StaticResource ToggleButton.Style}" 
+                                  ToolTip="&quot;Рука&quot; Ордера или Позиции"/>
+                    <Border ToolTip="Параметры для создания Ордера">
+                        <StackPanel>
+                            <ToggleButton x:Name="toggleButton"  Margin="5,2" 
+                                          IsChecked="{Binding IsManualPrice}" 
+                                          Style="{StaticResource ToggleButton.Style}"
+                                          ToolTip="Цена устанавливается в ручную или на берётся лучшая для указанной Руки">
+                                <ToggleButton.Resources>
+                                    <sys:String  x:Key="ToggleButton.Text.Check">Manual Price</sys:String>
+                                    <sys:String  x:Key="ToggleButton.Text.UnCheck">Best Price</sys:String>
+                                </ToggleButton.Resources>
+                                <ToggleButton.IsEnabled>
+                                    <Binding Converter="{StaticResource BooleanNotConverter}" Path="IsPosition"/>
+                                </ToggleButton.IsEnabled>
+                            </ToggleButton>
+                            <Grid ToolTip="Цена для Ордера">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Price" VerticalAlignment="Center"/>
+                                <TextBox TextAlignment="Center" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=toggleButton}"
+                             Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                            </Grid>
+                            <ToggleButton Margin="5,2" 
+                                          IsChecked="{Binding IsAmend}" 
+                                          Style="{StaticResource ToggleButton.Style}"
+                                          ToolTip="Ордер с постоянной ценной или корректировкой">
+                                <ToggleButton.Resources>
+                                    <sys:String  x:Key="ToggleButton.Text.Check">Amend Price</sys:String>
+                                    <sys:String  x:Key="ToggleButton.Text.UnCheck">Const Price</sys:String>
+                                </ToggleButton.Resources>
+                                <ToggleButton.IsEnabled>
+                                    <Binding Converter="{StaticResource BooleanNotConverter}" Path="IsPosition"/>
+                                </ToggleButton.IsEnabled>
+                            </ToggleButton>
+                        </StackPanel>
+                    </Border>
+                    <Border>
+                        <StackPanel>
+                            <ToggleButton x:Name="TB_PosOrd" Margin="5,2" 
+                                          IsChecked="{Binding IsPosition}" 
+                                          Style="{StaticResource ToggleButton.Style}"
+                                          ToolTip="Создание Позиции или Ордера">
+                                <ToggleButton.Resources>
+                                    <sys:String  x:Key="ToggleButton.Text.Check">Size Position</sys:String>
+                                    <sys:String  x:Key="ToggleButton.Text.UnCheck">Size Order</sys:String>
+                                </ToggleButton.Resources>
+                            </ToggleButton>
+                            <Grid ToolTip="Размер Позиции или Ордера">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Quantity" VerticalAlignment="Center"/>
+                                <TextBox x:Name="textBoxQuantity" TextAlignment="Center" Grid.Column="1"
+                                    Text="{Binding SizeOrder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <StackPanel>
+                        <StackPanel.Resources>
+                            <Style TargetType="Button" BasedOn="{StaticResource ComStyle}" x:Key="Style.Button.RedGreen">
+                                <Setter Property="Content" Value="Выставить ордер"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsChecked, ElementName=toggleButton1}" Value="false"/>
+                                            <Condition Binding="{Binding IsEnabled, Mode=OneWay, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Foreground" Value="Red"/>
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsChecked, ElementName=toggleButton1}" Value="true"/>
+                                            <Condition Binding="{Binding IsEnabled, Mode=OneWay, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Foreground" Value="Green"/>
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=TB_PosOrd}" Value="true">
+                                        <Setter Property="Content" Value="Создать позицию"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button x:Name="button" Grid.Column="1"
+                                Command="{Binding CreateOrderAmendCommand, Mode=OneWay}" 
+                                CommandParameter="{Binding Text, ElementName=textBoxQuantity}" Grid.ColumnSpan="2"
+                                Style="{DynamicResource Style.Button.RedGreen}"/>
+                        <Button Grid.Column="1" Content="Изменить цену Ордера"
+                                Command="{Binding OrderAmendCommand, Mode=OneWay}" 
+                                CommandParameter="{Binding Text, ElementName=textBoxQuantity}" Grid.ColumnSpan="2"
+                                Style="{DynamicResource Style.Button.RedGreen}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="12*"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="11*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border>
+                <StackPanel>
+                    <TextBlock Text="Отладка автоматической работы" TextAlignment="Center"/>
+                    <TextBlock Text="Финал расчёта" TextAlignment="Center"/>
+                    <Grid ToolTip="Установка финального времени для окончания расчёта">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Дата (ДД.ММ)" VerticalAlignment="Center"/>
+                        <TextBox TextAlignment="Center" Grid.Column="1" IsEnabled="{Binding IsTestTime}"
+                                 Text="{Binding FinishCalculationTime, StringFormat='dd.MM'}" Margin="5"/>
+                        <TextBlock Text="Время (ЧЧ:мм)" VerticalAlignment="Center" Grid.Row="1"/>
+                        <TextBox TextAlignment="Center" Grid.Column="1" Grid.Row="1" IsEnabled="{Binding IsTestTime}"
+                                 Text="{Binding FinishCalculationTime, StringFormat='HH:mm'}" Margin="5"/>
+                        <Button Grid.Column="2" Grid.RowSpan="2" Command="{Binding AddTimeCommand, Mode=OneWay}" IsEnabled="{Binding IsChecked, ElementName=toggleButton2}">
+                            <TextBlock TextWrapping="Wrap" TextAlignment="Center">
+                                 <Run Text="Добавить"/>
+                                 <LineBreak/>
+                                 <Run Text="свечу"/>
+                            </TextBlock>
+                        </Button>
+                    </Grid>
+                    <TextBlock>
+                        <Run Text="Finish Time: "/>
+                        <Run Text="{Binding FinishCalculationTime, StringFormat=\{0:u\}}"/>
+                    </TextBlock>
+                    <ToggleButton x:Name="toggleButton2" Margin="5,2" 
+                                  IsChecked="{Binding IsTestTime}" 
+                                  Style="{StaticResource ToggleButton.Style}"
+                                  ToolTip="Автоматическая работа по реальному времени или по указанному финишному">
+                        <ToggleButton.Resources>
+                            <sys:String  x:Key="ToggleButton.Text.Check">Test time</sys:String>
+                            <sys:String  x:Key="ToggleButton.Text.UnCheck">Real time</sys:String>
+                        </ToggleButton.Resources>
+                    </ToggleButton>
+                    <Grid ToolTip="Размер позиции создаваемый в автоматической работе">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Size Position" VerticalAlignment="Center"/>
+                        <TextBox TextAlignment="Center" Grid.Column="1"
+                             Text="{Binding SizePositionAutoWork, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                    </Grid>
+                    <Button Content="Начать автоматическую работу" Command="{Binding RunWorkCommand, Mode=OneWay}" 
+                            Visibility="{Binding IsWorkStarted, ConverterParameter=not, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Button Content="Закончить автоматическую работу" Command="{Binding EndWorkCommand, Mode=OneWay}"
+                            Visibility="{Binding IsWorkStarted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Border ToolTip="Симуляция получения &quot;Сигнала&quot;">
+                        <StackPanel>
+                            <ToggleButton x:Name="toggleButton3"  Margin="5,2" IsChecked="{Binding IsShortSignal}" Style="{StaticResource ToggleButton.Style}">
+                                <ToggleButton.Resources>
+                                    <sys:String  x:Key="ToggleButton.Text.Check">Short</sys:String>
+                                    <sys:String  x:Key="ToggleButton.Text.UnCheck">Long</sys:String>
+                                </ToggleButton.Resources>
+                            </ToggleButton>
+                            <Button x:Name="tbShortLong" Content="Подать &quot;Сигнал&quot;" 
+                                    Command="{Binding GiveSignalCommand, Mode=OneWay}" 
+                                    CommandParameter="{Binding IsChecked, ElementName=toggleButton3}" />
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
